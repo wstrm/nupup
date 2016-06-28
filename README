@@ -3,6 +3,13 @@ nupup
 
 Real hightech nup.pw uploader in shell.
 
+USAGE:
+  Usage: nupup [-a http(s)://address] [-h] file ..
+
+    -a {http(s)://address}	Upload address.
+    -h			Use the Hyperboria address (h.nup.pw).
+    file ..			A list of file names.
+
 INSTALL:
   chmod +x nupup
   cp nupup /usr/bin/.
