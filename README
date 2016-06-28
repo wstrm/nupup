@@ -1,0 +1,12 @@
+nupup
+=====
+
+Real hightech nup.pw uploader in shell.
+
+INSTALL:
+  chmod +x nupup
+  cp nupup /usr/bin/.
+  nupup # displays help message
+
+LICENSE:
+  Le GPLv3, please read ./LICENSE
