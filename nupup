@@ -13,6 +13,7 @@
 # If not, see <http://www.gnu.org/licenses/>.
 
 FILES=''
+XSEL=0
 ADDRESS='https://nup.pw'
 
 print_help () {
@@ -21,16 +22,20 @@ print_help () {
   echo -e 'Usage: nupup [-a http(s)://address] [-h] file ..\n'
   echo -e '\t-a {http(s)://address}\tUpload address.'
   echo -e '\t-h\t\t\tUse the Hyperboria address (h.nup.pw).'
+  echo -e '\t-s\t\t\tSave filelist to X selection.'
   echo -e '\tfile ..\t\t\tA list of file names.\n'
 }
 
-while getopts 'ha:' opt; do
+while getopts 'has:' opt; do
   case $opt in
     a)
       ADDRESS=$OPTARG
       ;;
     h)
       ADDRESS='http://h.nup.pw'
+      ;;
+    s)
+      XSEL=1
       ;;
     \?)
       echo 'Invalid option: -$OPTARG' >&2
@@ -46,9 +51,11 @@ shift $((OPTIND-1))
 
 [ -z $1 ] && print_help && exit 1
 
+# clear X selection, and inserting ' ' because some versions of xsel segfaults on appending to empty selection.
+[ $XSEL -eq 1 ] && xsel -c && echo -n ' ' | xsel -ip 
+
 for file in $@
 do
-  FILES=$FILES' -F file[]=@'$file;
+  echo Uploading $file:
+  curl -# -F file[]=@$file $ADDRESS | grep li | tr -d " "| tr \<,\> "$" | cut -d"$" -f 5,9 --output-delimiter=": " | (read f; [ $XSEL -eq 1 ] && echo $f | xsel -ap; echo $f; echo)
 done
-
-curl -# $FILES $ADDRESS | grep li | tr -d " "| tr \<,\> "$" | cut -d"$" -f 5,9 --output-delimiter=": "
